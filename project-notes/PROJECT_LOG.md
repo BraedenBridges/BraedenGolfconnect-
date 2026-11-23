@@ -2,25 +2,23 @@
 
 Keep this up to date as you go — a few lines per work session is enough. It's much harder to reconstruct at the end.
 
-**Team name:**
-**Startup name:**
+**Team name:** Golf Connect Team
+**Startup name:** Golf Connect
 **Live site link:**
 
 ---
 
 ## Work sessions
+### Session — 2026-11-23 — driver: Braeden
 
-Copy this block for each session.
-
-### Session — [date] — driver: [first name]
-
-- **Goal for this session:**
+- **Goal for this session:** Restart the placeholder project and build a complete Golf Connect prototype.
 - **Key prompts we gave Copilot** (paste the important ones):
-  1.
-  2.
-- **What worked:**
-- **What broke, and how we fixed it:**
-- **Committed?** yes / no — commit message:
+  1. "Create Golf Connect: an online platform that connects golfers based on location, skill level, availability, and interests."
+  2. "Include finding players, organizing rounds, discovering tournaments, and tracking golfing experiences."
+  3. "Refer to the rubric and update the business case log."
+- **What worked:** The prototype now has a branded home page, fictional golfer profiles with filters, tournament discovery, a local golf round journal, and browser-saved profile and round interactions.
+- **What broke, and how we fixed it:** The original starter used generic startup text and sample listings. It was replaced with Golf Connect-specific data and interactions.
+- **Committed?** no — changes ready for a checkpoint
 
 ---
 

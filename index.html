@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>YourStartup</title>
-  <meta name="description" content="A student startup prototype for BSAD 281.">
+  <title>Golf Connect</title>
+  <meta name="description" content="Golf Connect helps golfers find playing partners, rounds, tournaments, and track golf experiences.">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -14,10 +14,12 @@
        Each link points to a "view" further down the page (#home, #explore, #about).
        ========================================================= -->
   <header class="site-header">
-    <a class="brand" href="#home" id="brand-name">YourStartup</a>
+    <a class="brand" href="#home" id="brand-name">Golf Connect</a>
     <nav aria-label="Main">
       <a href="#home">Home</a>
-      <a href="#explore">Explore</a>
+      <a href="#players">Find players</a>
+      <a href="#tournaments">Tournaments</a>
+      <a href="#rounds">My rounds</a>
       <a href="#about">About</a>
     </nav>
   </header>
@@ -29,58 +31,185 @@
          ======================================================= -->
     <section id="home" data-view>
       <div class="hero">
-        <p class="eyebrow">Prototype</p>
-        <h1 id="tagline">One sentence that says what your startup does.</h1>
+        <p class="eyebrow">Golf should be social</p>
+        <h1 id="tagline">Find golfers. Plan rounds. Keep playing.</h1>
         <p class="lead" id="pitch">
-          Who is your customer, what problem do they have, and why is your
-          solution better than what they use today?
+          Golf Connect brings compatible golfers together based on location,
+          skill level, availability, and interests.
         </p>
-        <a class="button" href="#explore">See it in action</a>
+        <a class="button" href="#players">Find a playing partner</a>
       </div>
 
-      <div class="steps">
-        <div class="card">
-          <h2>1. Step one</h2>
-          <p>Describe the first thing a customer does.</p>
-        </div>
-        <div class="card">
-          <h2>2. Step two</h2>
-          <p>Describe what happens next.</p>
-        </div>
-        <div class="card">
-          <h2>3. Step three</h2>
-          <p>Describe the result the customer gets.</p>
-        </div>
+      <div class="feature-grid">
+        <article class="feature-card">
+          <span class="feature-icon" aria-hidden="true">01</span>
+          <h2>Find your group</h2>
+          <p>Filter nearby golfers by experience, schedule, course preferences, and interests.</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-icon" aria-hidden="true">02</span>
+          <h2>Organize a round</h2>
+          <p>Start with a fictional invite, choose a course and tee time, and keep everyone aligned.</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-icon" aria-hidden="true">03</span>
+          <h2>Discover and remember</h2>
+          <p>Browse local tournament events and record completed rounds and courses.</p>
+        </article>
+      </div>
+
+      <div class="home-panels">
+        <section class="panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Quick start</p>
+              <h2>Featured golfers near Antigonish</h2>
+            </div>
+            <a href="#players">View all</a>
+          </div>
+          <div id="featured-player-grid" class="player-grid"></div>
+        </section>
       </div>
     </section>
 
-    <!-- =======================================================
-         VIEW 2: EXPLORE — a list built from the fake data in data.js.
-         ======================================================= -->
-    <section id="explore" data-view hidden>
-      <h1>Explore</h1>
-      <p class="muted">These examples are fake. They come from <code>data.js</code>.</p>
+    <section id="players" data-view hidden>
+      <div class="page-heading">
+        <div>
+          <p class="eyebrow">Find a playing partner</p>
+          <h1>Golfers near you</h1>
+        </div>
+        <button class="button" id="open-profile-button" type="button">Add my profile</button>
+      </div>
 
-      <label class="search">
-        <span>Search</span>
-        <input type="search" id="search-box" placeholder="Type to filter…">
-      </label>
+      <div class="filters" aria-label="Player filters">
+        <label>
+          <span>Location</span>
+          <select id="location-filter">
+            <option value="">Any area</option>
+          </select>
+        </label>
+        <label>
+          <span>Skill level</span>
+          <select id="skill-filter">
+            <option value="">Any level</option>
+            <option>Beginner</option>
+            <option>Recreational</option>
+            <option>Intermediate</option>
+            <option>Competitive</option>
+          </select>
+        </label>
+        <label>
+          <span>Availability</span>
+          <select id="availability-filter">
+            <option value="">Any time</option>
+            <option>Weekday morning</option>
+            <option>Weekday afternoon</option>
+            <option>Weekend</option>
+            <option>Flexible</option>
+          </select>
+        </label>
+        <label class="search-filter">
+          <span>Search</span>
+          <input type="search" id="search-box" placeholder="Name, course, or interest">
+        </label>
+      </div>
 
-      <p class="muted" id="saved-count"></p>
+      <p class="muted" id="player-count"></p>
       <div class="grid" id="listing-grid"></div>
-      <p class="empty" id="empty-message" hidden>Nothing matches your search.</p>
+      <p class="empty" id="empty-message" hidden>No golfers match those filters.</p>
     </section>
 
-    <!-- =======================================================
-         VIEW 3: ABOUT — your team and your story.
-         ======================================================= -->
+    <section id="tournaments" data-view hidden>
+      <div class="page-heading">
+        <div>
+          <p class="eyebrow">Explore opportunities</p>
+          <h1>Upcoming tournaments</h1>
+        </div>
+      </div>
+      <div class="tournament-list" id="tournament-list"></div>
+    </section>
+
+    <section id="rounds" data-view hidden>
+      <div class="page-heading">
+        <div>
+          <p class="eyebrow">Golf journal</p>
+          <h1>My rounds</h1>
+        </div>
+        <button class="button" id="open-round-button" type="button">Add a round</button>
+      </div>
+      <div class="round-summary">
+        <div><strong id="round-count">0</strong><span>Rounds</span></div>
+        <div><strong id="course-count">0</strong><span>Courses</span></div>
+        <div><strong id="best-score">--</strong><span>Best score</span></div>
+      </div>
+      <div class="round-list" id="round-list"></div>
+    </section>
+
     <section id="about" data-view hidden>
-      <h1>About us</h1>
-      <p>Tell the story of why your team started this company.</p>
-      <p>Use first names only, or no names at all — this site is public.</p>
+      <div class="about-layout">
+        <div>
+          <p class="eyebrow">Our story</p>
+          <h1>Golf is better with the right group.</h1>
+          <p class="lead">
+            Golf Connect was created to make finding compatible playing partners
+            easier for new golfers, visitors, and anyone without a regular foursome.
+          </p>
+        </div>
+        <aside class="panel">
+          <h2>What makes us different</h2>
+          <ul>
+            <li>Golf-specific matching</li>
+            <li>Flexible, inclusive skill ranges</li>
+            <li>Round planning and golf tracking</li>
+            <li>Local tournament discovery</li>
+          </ul>
+        </aside>
+      </div>
     </section>
 
   </main>
+
+  <dialog id="profile-dialog">
+    <form method="dialog" id="profile-form">
+      <div class="dialog-heading">
+        <h2>Add your profile</h2>
+        <button type="button" class="icon-button" data-close-dialog aria-label="Close">×</button>
+      </div>
+      <label>Name<input name="name" required maxlength="40" placeholder="First name only"></label>
+      <label>Area<input name="location" required maxlength="60" placeholder="e.g. Antigonish"></label>
+      <label>Skill level
+        <select name="skill" required>
+          <option>Beginner</option>
+          <option>Recreational</option>
+          <option>Intermediate</option>
+          <option>Competitive</option>
+        </select>
+      </label>
+      <label>Availability
+        <select name="availability" required>
+          <option>Weekday morning</option>
+          <option>Weekday afternoon</option>
+          <option>Weekend</option>
+          <option>Flexible</option>
+        </select>
+      </label>
+      <button class="button" type="submit">Save profile</button>
+    </form>
+  </dialog>
+
+  <dialog id="round-dialog">
+    <form method="dialog" id="round-form">
+      <div class="dialog-heading">
+        <h2>Add a round</h2>
+        <button type="button" class="icon-button" data-close-dialog aria-label="Close">×</button>
+      </div>
+      <label>Course<input name="course" required maxlength="60" placeholder="Course name"></label>
+      <label>Date<input name="date" type="date" required></label>
+      <label>Score<input name="score" type="number" required min="18" max="200" placeholder="72"></label>
+      <label>Notes<textarea name="notes" maxlength="160" placeholder="Optional"></textarea></label>
+      <button class="button" type="submit">Save round</button>
+    </form>
+  </dialog>
 
   <!-- Keep this footer. Your site must say it is a student project. -->
   <footer class="site-footer">

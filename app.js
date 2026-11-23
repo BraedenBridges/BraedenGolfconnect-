@@ -1,109 +1,115 @@
-// ============================================================
-// app.js — what your site DOES.
-// Plain JavaScript, no libraries, no installs.
-// It uses STARTUP and LISTINGS from data.js (loaded first).
-// ============================================================
-
+// app.js - interactive behavior for the Golf Connect prototype
 (function () {
   "use strict";
 
-  // ----------------------------------------------------------
-  // 1. Saving things in the browser (localStorage).
-  //    This only remembers things on THIS browser on THIS device.
-  //    Your teammates and your customers will NOT see it.
-  //    A real product would need a server and a database for that.
-  // ----------------------------------------------------------
   const storage = {
     get: function (key, fallback) {
       try {
-        const saved = localStorage.getItem(key);
-        return saved === null ? fallback : JSON.parse(saved);
+        const value = localStorage.getItem(key);
+        return value === null ? fallback : JSON.parse(value);
       } catch (error) {
-        return fallback; // storage blocked or broken: just carry on
+        return fallback;
       }
     },
     set: function (key, value) {
       try {
         localStorage.setItem(key, JSON.stringify(value));
       } catch (error) {
-        // storage blocked (e.g. private window): ignore
+        // The prototype still works if browser storage is unavailable.
       }
     }
   };
 
-  let savedIds = storage.get("savedIds", []);
+  let customPlayers = storage.get("golfConnectProfiles", []);
+  let rounds = storage.get("golfConnectRounds", [
+    { id: 1, course: "Fairmont Fairway", date: "2026-05-10", score: 88, notes: "Great weather and a new personal best for nine holes." },
+    { id: 2, course: "Riverbend Links", date: "2026-04-26", score: 96, notes: "Played a relaxed round with friends." }
+  ]);
+  let savedIds = storage.get("golfConnectSavedIds", []);
 
-  // ----------------------------------------------------------
-  // 2. Put the startup's name and pitch on the page.
-  // ----------------------------------------------------------
   document.title = STARTUP.name;
   document.getElementById("brand-name").textContent = STARTUP.name;
   document.getElementById("tagline").textContent = STARTUP.tagline;
   document.getElementById("pitch").textContent = STARTUP.pitch;
 
-  // ----------------------------------------------------------
-  // 3. Views: show one section at a time, based on the #link in the address bar.
-  // ----------------------------------------------------------
   function showView() {
     const requested = (window.location.hash || "#home").slice(1);
-    const views = document.querySelectorAll("[data-view]");
-    const exists = Array.prototype.some.call(views, function (view) {
-      return view.id === requested;
-    });
-    const current = exists ? requested : "home";
+    const views = Array.from(document.querySelectorAll("[data-view]"));
+    const current = views.some(function (view) { return view.id === requested; }) ? requested : "home";
 
     views.forEach(function (view) {
       view.hidden = view.id !== current;
     });
-
     document.querySelectorAll("nav a").forEach(function (link) {
-      if (link.getAttribute("href") === "#" + current) {
+      const isCurrent = link.getAttribute("href") === "#" + current;
+      if (isCurrent) {
         link.setAttribute("aria-current", "page");
       } else {
         link.removeAttribute("aria-current");
       }
     });
-
     window.scrollTo(0, 0);
   }
 
   window.addEventListener("hashchange", showView);
 
-  // ----------------------------------------------------------
-  // 4. Explore page: build one card per listing.
-  //    We use textContent (not innerHTML) so text is always shown
-  //    as text — a basic security habit.
-  // ----------------------------------------------------------
-  const grid = document.getElementById("listing-grid");
+  const allPlayers = function () {
+    return customPlayers.concat(LISTINGS);
+  };
+
+  const listingGrid = document.getElementById("listing-grid");
+  const featuredGrid = document.getElementById("featured-player-grid");
   const searchBox = document.getElementById("search-box");
+  const locationFilter = document.getElementById("location-filter");
+  const skillFilter = document.getElementById("skill-filter");
+  const availabilityFilter = document.getElementById("availability-filter");
   const emptyMessage = document.getElementById("empty-message");
-  const savedCount = document.getElementById("saved-count");
+  const playerCount = document.getElementById("player-count");
 
-  function makeCard(item) {
+  function makePlayerCard(player, compact) {
     const card = document.createElement("article");
-    card.className = "card";
+    card.className = compact ? "player-card compact" : "player-card";
 
-    const tag = document.createElement("span");
-    tag.className = "tag";
-    tag.textContent = item.category;
+    const header = document.createElement("div");
+    header.className = "player-header";
 
+    const avatar = document.createElement("span");
+    avatar.className = "avatar";
+    avatar.textContent = player.initials || player.name.slice(0, 2).toUpperCase();
+
+    const identity = document.createElement("div");
     const title = document.createElement("h2");
-    title.textContent = item.name;
+    title.textContent = player.name;
+    const location = document.createElement("p");
+    location.textContent = player.location;
+    identity.append(title, location);
+    header.append(avatar, identity);
 
-    const text = document.createElement("p");
-    text.textContent = item.description;
+    const details = document.createElement("div");
+    details.className = "player-details";
+    details.innerHTML =
+      '<span><b>Skill</b> ' + player.skill + "</span>" +
+      "<span><b>Available</b> " + player.availability + "</span>";
 
-    const isSaved = savedIds.indexOf(item.id) !== -1;
+    const description = document.createElement("p");
+    description.className = "player-description";
+    description.textContent = player.description || "Interested in golf and meeting compatible playing partners.";
+
+    const interest = document.createElement("p");
+    interest.className = "interest";
+    interest.textContent = player.interests || "Social golf";
+
+    const isSaved = savedIds.indexOf(player.id) !== -1;
     const button = document.createElement("button");
     button.type = "button";
     button.className = "button secondary";
-    button.textContent = isSaved ? "Saved ✓" : "Save";
+    button.textContent = isSaved ? "Saved ✓" : "Save player";
     button.setAttribute("aria-pressed", isSaved ? "true" : "false");
     button.addEventListener("click", function () {
-      toggleSaved(item.id);
+      toggleSaved(player.id);
     });
 
-    card.append(tag, title, text, button);
+    card.append(header, details, description, interest, button);
     return card;
   }
 
@@ -113,29 +119,170 @@
     } else {
       savedIds = savedIds.filter(function (savedId) { return savedId !== id; });
     }
-    storage.set("savedIds", savedIds);
-    renderListings();
+    storage.set("golfConnectSavedIds", savedIds);
+    renderPlayers();
   }
 
-  function renderListings() {
+  function renderPlayers() {
     const query = searchBox.value.trim().toLowerCase();
-    const matches = LISTINGS.filter(function (item) {
-      const text = (item.name + " " + item.category + " " + item.description).toLowerCase();
-      return text.indexOf(query) !== -1;
+    const matches = allPlayers().filter(function (player) {
+      const matchesLocation = !locationFilter.value || player.location === locationFilter.value;
+      const matchesSkill = !skillFilter.value || player.skill === skillFilter.value;
+      const matchesAvailability = !availabilityFilter.value || player.availability === availabilityFilter.value;
+      const searchable = (player.name + " " + player.location + " " + player.skill + " " + player.availability + " " + (player.interests || "") + " " + (player.course || "")).toLowerCase();
+      return matchesLocation && matchesSkill && matchesAvailability && searchable.indexOf(query) !== -1;
     });
 
-    grid.replaceChildren.apply(grid, matches.map(makeCard));
+    listingGrid.replaceChildren.apply(listingGrid, matches.map(function (player) {
+      return makePlayerCard(player, false);
+    }));
     emptyMessage.hidden = matches.length > 0;
-    savedCount.textContent = savedIds.length === 0
-      ? "Tap Save on anything you like."
-      : "You've saved " + savedIds.length + " item(s) on this device.";
+    playerCount.textContent = matches.length + " golfer" + (matches.length === 1 ? "" : "s") + " found";
   }
 
-  searchBox.addEventListener("input", renderListings);
+  function populateLocations() {
+    const locations = Array.from(new Set(allPlayers().map(function (player) { return player.location; }))).sort();
+    locations.forEach(function (location) {
+      const option = document.createElement("option");
+      option.textContent = location;
+      option.value = location;
+      locationFilter.appendChild(option);
+    });
+  }
 
-  // ----------------------------------------------------------
-  // 5. Start up.
-  // ----------------------------------------------------------
-  renderListings();
+  function renderFeatured() {
+    const featured = LISTINGS.filter(function (player) { return player.location === "Antigonish"; }).slice(0, 3);
+    featuredGrid.replaceChildren.apply(featuredGrid, featured.map(function (player) {
+      return makePlayerCard(player, true);
+    }));
+  }
+
+  [searchBox, locationFilter, skillFilter, availabilityFilter].forEach(function (control) {
+    control.addEventListener(control.tagName === "INPUT" ? "input" : "change", renderPlayers);
+  });
+
+  function renderTournaments() {
+    const list = document.getElementById("tournament-list");
+    const elements = TOURNAMENTS.map(function (event) {
+      const card = document.createElement("article");
+      card.className = "tournament-card";
+
+      const date = document.createElement("div");
+      date.className = "tournament-date";
+      const dateParts = event.date.split(" ");
+      date.innerHTML = "<span>" + dateParts[0] + "</span><strong>" + dateParts[1] + "</strong>";
+
+      const details = document.createElement("div");
+      details.className = "tournament-details";
+      const title = document.createElement("h2");
+      title.textContent = event.name;
+      const meta = document.createElement("p");
+      meta.textContent = event.location + " · " + event.format + " · " + event.level;
+      details.append(title, meta);
+
+      const action = document.createElement("div");
+      action.className = "tournament-action";
+      const spots = document.createElement("span");
+      spots.textContent = event.spots;
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "button secondary";
+      button.textContent = "Interested";
+      button.addEventListener("click", function () {
+        button.textContent = "Interest saved ✓";
+        button.disabled = true;
+      });
+      action.append(spots, button);
+
+      card.append(date, details, action);
+      return card;
+    });
+    list.replaceChildren.apply(list, elements);
+  }
+
+  function renderRounds() {
+    const list = document.getElementById("round-list");
+    document.getElementById("round-count").textContent = rounds.length;
+    document.getElementById("course-count").textContent = new Set(rounds.map(function (round) { return round.course; })).size;
+    const scores = rounds.map(function (round) { return Number(round.score); }).filter(function (score) { return !isNaN(score); });
+    document.getElementById("best-score").textContent = scores.length ? Math.min.apply(null, scores) : "--";
+
+    if (rounds.length === 0) {
+      const empty = document.createElement("p");
+      empty.className = "empty";
+      empty.textContent = "No rounds recorded yet.";
+      list.replaceChildren(empty);
+      return;
+    }
+
+    const cards = rounds.slice().sort(function (a, b) { return b.date.localeCompare(a.date); }).map(function (round) {
+      const card = document.createElement("article");
+      card.className = "round-card";
+      const date = new Date(round.date + "T12:00:00");
+      card.innerHTML =
+        "<div><span class=\"round-date\">" + date.toLocaleDateString("en-CA", { month: "short", day: "numeric", year: "numeric" }) + "</span>" +
+        "<h2>" + round.course + "</h2><p>" + (round.notes || "Golf round") + "</p></div>" +
+        "<div class=\"score\"><strong>" + round.score + "</strong><span>score</span></div>";
+      return card;
+    });
+    list.replaceChildren.apply(list, cards);
+  }
+
+  function closeDialogs() {
+    document.querySelectorAll("dialog[open]").forEach(function (dialog) { dialog.close(); });
+  }
+  document.querySelectorAll("[data-close-dialog]").forEach(function (button) {
+    button.addEventListener("click", closeDialogs);
+  });
+
+  document.getElementById("open-profile-button").addEventListener("click", function () {
+    document.getElementById("profile-dialog").showModal();
+  });
+  document.getElementById("open-round-button").addEventListener("click", function () {
+    document.getElementById("round-dialog").showModal();
+  });
+
+  document.getElementById("profile-form").addEventListener("submit", function (event) {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    customPlayers.unshift({
+      id: "custom-" + Date.now(),
+      name: data.get("name"),
+      location: data.get("location"),
+      skill: data.get("skill"),
+      availability: data.get("availability"),
+      interests: "Custom profile",
+      course: "Course preference not set",
+      description: "Ready to meet compatible golfers.",
+      initials: String(data.get("name")).slice(0, 2).toUpperCase()
+    });
+    storage.set("golfConnectProfiles", customPlayers);
+    populateLocations();
+    renderPlayers();
+    event.currentTarget.reset();
+    closeDialogs();
+  });
+
+  document.getElementById("round-form").addEventListener("submit", function (event) {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    rounds.unshift({
+      id: Date.now(),
+      course: data.get("course"),
+      date: data.get("date"),
+      score: Number(data.get("score")),
+      notes: data.get("notes")
+    });
+    storage.set("golfConnectRounds", rounds);
+    renderRounds();
+    event.currentTarget.reset();
+    closeDialogs();
+  });
+
+  populateLocations();
+  renderPlayers();
+  renderFeatured();
+  renderTournaments();
+  renderRounds();
   showView();
 })();
