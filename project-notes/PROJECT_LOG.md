@@ -27,7 +27,7 @@ Keep this up to date as you go — a few lines per work session is enough. It's 
 
 | Date | What went wrong | What we tried | What finally fixed it |
 |---|---|---|---|
-| | | | |
+| 2026-11-24 | Local `main` and `origin/main` had diverged. | Integrated the local and remote commits. | Synchronized the branches. |
 
 ## What a real version would need
 
