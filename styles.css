@@ -75,6 +75,22 @@ h1 { line-height:1.12; }
 .filters label,.dialog-heading+label,dialog form>label { display:flex; flex-direction:column; gap:6px; font-size:.78rem; font-weight:800; }
 .filters input,.filters select,dialog input,dialog select,dialog textarea { width:100%; min-height:42px; padding:9px 10px; border:1px solid var(--border); border-radius:9px; background:white; font:inherit; }
 .filters input,.filters select { font-size:.88rem; }
+.pro-filters { grid-template-columns:minmax(260px, 1fr); }
+.pro-card { display:flex; flex-direction:column; gap:18px; padding:20px; border:1px solid var(--border); border-radius:var(--radius); background:var(--surface); }
+.pro-card .button { align-self:flex-start; margin-top:auto; }
+.pro-details { display:grid; gap:10px; }
+.pro-details p { display:flex; flex-direction:column; gap:2px; margin:0; color:var(--muted); font-size:.86rem; }
+.pro-details strong { color:var(--text); font-size:.75rem; }
+.lesson-bookings-panel { margin-top:28px; }
+.lesson-bookings-panel .section-heading { margin-bottom:12px; }
+.lesson-bookings-panel .section-heading h2 { margin:0; }
+.lesson-booking-list { display:flex; flex-direction:column; gap:10px; }
+.lesson-booking { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px; border:1px solid var(--border); border-radius:10px; background:var(--background); }
+.lesson-booking h3 { margin:0 0 3px; font-size:.98rem; }
+.lesson-booking p { margin:0; color:var(--muted); font-size:.84rem; }
+.demo-booking-label { flex-shrink:0; color:var(--brand); font-size:.75rem; font-weight:800; }
+.dialog-note { margin:0; font-size:.82rem; }
+.dialog-error { margin:0; color:#a12626; font-size:.88rem; font-weight:700; }
 .premium-label { margin-left:4px; color:var(--brand); }
 #player-count { margin:12px 0; }
 .empty { padding:24px; color:var(--muted); text-align:center; }
@@ -153,6 +169,7 @@ textarea { min-height:80px; resize:vertical; }
   .tournament-card { grid-template-columns:72px 1fr; }
   .tournament-action { grid-column:1/-1; align-items:center; }
   .round-card { align-items:flex-start; }
+  .lesson-booking { align-items:flex-start; flex-direction:column; }
   .premium-hero { align-items:flex-start; flex-direction:column; padding:36px 24px; }
   .premium-price { flex-basis:auto; width:150px; height:150px; }
   .premium-grid,.premium-comparison { grid-template-columns:1fr; }

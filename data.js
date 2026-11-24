@@ -25,6 +25,13 @@ const LISTINGS = [
   { id: 6, name: "Maya", location: "Antigonish", skill: "Intermediate", availability: "Weekday evening", interests: "Women’s golf, course walks", course: "Fairmont Fairway", description: "Planning to join a local league and meet more golfers.", initials: "MA" }
 ];
 
+const PROS = [
+  { id: "pro-1", name: "Jordan Lee", location: "Antigonish", course: "Fairmont Fairway", specialty: "Beginner lessons, putting", experience: "Teaching professional · 8 years", availability: "Weekday afternoons", rate: "$60 / 45 min", initials: "JL" },
+  { id: "pro-2", name: "Morgan Chen", location: "Halifax", course: "Harbourview Golf", specialty: "Short game, course strategy", experience: "Teaching professional · 12 years", availability: "Weekday mornings", rate: "$75 / 60 min", initials: "MC" },
+  { id: "pro-3", name: "Casey Martin", location: "St. Andrews", course: "North Shore Golf Club", specialty: "Full swing, beginner lessons", experience: "Teaching professional · 6 years", availability: "Weekends", rate: "$55 / 45 min", initials: "CM" },
+  { id: "pro-4", name: "Taylor Brooks", location: "New Glasgow", course: "Pictou Pines", specialty: "Putting, short game", experience: "Teaching professional · 10 years", availability: "Flexible", rate: "$65 / 45 min", initials: "TB" }
+];
+
 const TOURNAMENTS = [
   { id: 1, name: "Spring Scramble", location: "Fairmont Fairway", date: "May 24", format: "2-player scramble", level: "All levels", spots: "18 teams" },
   { id: 2, name: "Community Classic", location: "Riverbend Links", date: "June 8", format: "Individual stroke play", level: "Recreational", spots: "32 spots" },

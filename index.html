@@ -18,6 +18,7 @@
     <nav aria-label="Main">
       <a href="#home">Home</a>
       <a href="#players">Find players</a>
+      <a href="#pros">Find pros</a>
       <a href="#tournaments">Tournaments</a>
       <a href="#rounds">My rounds</a>
       <a href="#premium" id="premium-nav">Premium</a>
@@ -137,6 +138,36 @@
       </aside>
       <div class="grid" id="listing-grid"></div>
       <p class="empty" id="empty-message" hidden>No golfers match those filters.</p>
+    </section>
+
+    <section id="pros" data-view hidden>
+      <div class="page-heading">
+        <div>
+          <p class="eyebrow">Lessons with local golf pros</p>
+          <h1>Find a golf pro</h1>
+        </div>
+      </div>
+      <p class="muted">Search by pro, course, area, or lesson. All profiles and lesson details are fictional demo data.</p>
+      <div class="filters pro-filters" aria-label="Golf pro search">
+        <label class="search-filter">
+          <span>Search pros and courses</span>
+          <input type="search" id="pro-search-box" placeholder="Name, course, area, or lesson">
+        </label>
+      </div>
+      <p class="muted" id="pro-count" aria-live="polite"></p>
+      <div class="grid" id="pro-grid"></div>
+      <p class="empty" id="pro-empty-message" hidden>No pros match that search.</p>
+
+      <section class="panel lesson-bookings-panel" aria-labelledby="lesson-bookings-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Saved on this device</p>
+            <h2 id="lesson-bookings-heading">Your demo lesson bookings</h2>
+          </div>
+        </div>
+        <p class="muted">These demo bookings are not sent to a pro and do not confirm a real appointment.</p>
+        <div class="lesson-booking-list" id="lesson-booking-list"></div>
+      </section>
     </section>
 
     <section id="tournaments" data-view hidden>
@@ -286,6 +317,37 @@
       <label>Score<input name="score" type="number" required min="18" max="200" placeholder="72"></label>
       <label>Notes<textarea name="notes" maxlength="160" placeholder="Optional"></textarea></label>
       <button class="button" type="submit">Save round</button>
+    </form>
+  </dialog>
+
+  <dialog id="lesson-dialog">
+    <form id="lesson-form">
+      <div class="dialog-heading">
+        <h2>Book a demo lesson</h2>
+        <button type="button" class="icon-button" data-close-dialog aria-label="Close">×</button>
+      </div>
+      <p class="muted" id="lesson-pro-summary"></p>
+      <p class="dialog-error" id="lesson-form-error" role="alert" hidden></p>
+      <label>Lesson type
+        <select name="lessonType" required>
+          <option>Private lesson</option>
+          <option>Beginner lesson</option>
+          <option>Short game</option>
+          <option>Putting</option>
+        </select>
+      </label>
+      <label>Date<input name="date" type="date" required></label>
+      <label>Time
+        <select name="time" required>
+          <option>9:00 AM</option>
+          <option>11:00 AM</option>
+          <option>1:00 PM</option>
+          <option>3:00 PM</option>
+        </select>
+      </label>
+      <label>Note for the pro<textarea name="note" maxlength="160" placeholder="Optional"></textarea></label>
+      <p class="muted dialog-note">Demo only — this will not contact the pro or confirm availability.</p>
+      <button class="button" type="submit">Save demo booking</button>
     </form>
   </dialog>
 

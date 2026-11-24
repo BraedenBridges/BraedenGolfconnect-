@@ -27,6 +27,7 @@
   ]);
   let savedIds = storage.get("golfConnectSavedIds", []);
   let isPremium = storage.get("golfConnectPremium", false);
+  let lessonBookings = storage.get("golfConnectLessonBookings", []);
 
   document.title = STARTUP.name;
   document.getElementById("brand-name").textContent = STARTUP.name;
@@ -67,6 +68,13 @@
   const interestFilter = document.getElementById("interest-filter");
   const emptyMessage = document.getElementById("empty-message");
   const playerCount = document.getElementById("player-count");
+  const proGrid = document.getElementById("pro-grid");
+  const proSearchBox = document.getElementById("pro-search-box");
+  const proCount = document.getElementById("pro-count");
+  const proEmptyMessage = document.getElementById("pro-empty-message");
+  const lessonBookingList = document.getElementById("lesson-booking-list");
+  const lessonDateInput = document.querySelector('#lesson-form input[name="date"]');
+  let selectedPro = null;
 
   function makePlayerCard(player, compact) {
     const card = document.createElement("article");
@@ -159,6 +167,138 @@
       return makePlayerCard(player, true);
     }));
   }
+
+  function renderPros() {
+    const query = proSearchBox.value.trim().toLowerCase();
+    const matches = PROS.filter(function (pro) {
+      const searchable = [pro.name, pro.location, pro.course, pro.specialty, pro.experience, pro.availability].join(" ").toLowerCase();
+      return searchable.indexOf(query) !== -1;
+    });
+
+    const cards = matches.map(function (pro) {
+      const card = document.createElement("article");
+      card.className = "pro-card";
+
+      const header = document.createElement("div");
+      header.className = "player-header";
+      const avatar = document.createElement("span");
+      avatar.className = "avatar";
+      avatar.textContent = pro.initials;
+      const identity = document.createElement("div");
+      const name = document.createElement("h2");
+      name.textContent = pro.name;
+      const course = document.createElement("p");
+      course.textContent = pro.course + " · " + pro.location;
+      identity.append(name, course);
+      header.append(avatar, identity);
+
+      const details = document.createElement("div");
+      details.className = "pro-details";
+      [
+        ["Teaching", pro.experience],
+        ["Lessons", pro.specialty],
+        ["Availability", pro.availability],
+        ["Rate", pro.rate]
+      ].forEach(function (item) {
+        const detail = document.createElement("p");
+        const label = document.createElement("strong");
+        label.textContent = item[0];
+        const value = document.createElement("span");
+        value.textContent = item[1];
+        detail.append(label, value);
+        details.appendChild(detail);
+      });
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "button";
+      button.textContent = "Book a lesson";
+      button.addEventListener("click", function () {
+        openLessonDialog(pro);
+      });
+      card.append(header, details, button);
+      return card;
+    });
+
+    proGrid.replaceChildren.apply(proGrid, cards);
+    proCount.textContent = matches.length + " pro" + (matches.length === 1 ? "" : "s") + " found";
+    proEmptyMessage.hidden = matches.length > 0;
+  }
+
+  function renderLessonBookings() {
+    if (lessonBookings.length === 0) {
+      const empty = document.createElement("p");
+      empty.className = "empty";
+      empty.textContent = "No demo lesson bookings yet.";
+      lessonBookingList.replaceChildren(empty);
+      return;
+    }
+
+    const cards = lessonBookings.slice().sort(function (a, b) {
+      return a.date.localeCompare(b.date) || a.time.localeCompare(b.time);
+    }).map(function (booking) {
+      const card = document.createElement("article");
+      card.className = "lesson-booking";
+      const details = document.createElement("div");
+      const title = document.createElement("h3");
+      title.textContent = booking.lessonType + " with " + booking.proName;
+      const meta = document.createElement("p");
+      const date = new Date(booking.date + "T12:00:00");
+      meta.textContent = booking.course + " · " + date.toLocaleDateString("en-CA", { month: "short", day: "numeric", year: "numeric" }) + " at " + booking.time;
+      details.append(title, meta);
+      if (booking.note) {
+        const note = document.createElement("p");
+        note.textContent = "Note: " + booking.note;
+        details.appendChild(note);
+      }
+      const label = document.createElement("span");
+      label.className = "demo-booking-label";
+      label.textContent = "Demo booking";
+      card.append(details, label);
+      return card;
+    });
+    lessonBookingList.replaceChildren.apply(lessonBookingList, cards);
+  }
+
+  function openLessonDialog(pro) {
+    selectedPro = pro;
+    document.getElementById("lesson-form-error").hidden = true;
+    document.getElementById("lesson-pro-summary").textContent =
+      pro.name + " · " + pro.course + ", " + pro.location + " · " + pro.rate;
+    const today = new Date();
+    lessonDateInput.min = [
+      today.getFullYear(),
+      String(today.getMonth() + 1).padStart(2, "0"),
+      String(today.getDate()).padStart(2, "0")
+    ].join("-");
+    document.getElementById("lesson-dialog").showModal();
+  }
+
+  proSearchBox.addEventListener("input", renderPros);
+  document.getElementById("lesson-form").addEventListener("submit", function (event) {
+    event.preventDefault();
+    if (!selectedPro) {
+      const error = document.getElementById("lesson-form-error");
+      error.textContent = "Choose a pro before saving a demo booking.";
+      error.hidden = false;
+      return;
+    }
+    const data = new FormData(event.currentTarget);
+    lessonBookings.push({
+      id: Date.now(),
+      proName: selectedPro.name,
+      course: selectedPro.course,
+      lessonType: data.get("lessonType"),
+      date: data.get("date"),
+      time: data.get("time"),
+      note: data.get("note")
+    });
+    storage.set("golfConnectLessonBookings", lessonBookings);
+    renderLessonBookings();
+    event.currentTarget.reset();
+    selectedPro = null;
+    closeDialogs();
+  });
 
   [searchBox, locationFilter, skillFilter, availabilityFilter].forEach(function (control) {
     control.addEventListener(control.tagName === "INPUT" ? "input" : "change", renderPlayers);
@@ -337,6 +477,8 @@
 
   populateLocations();
   renderPlayers();
+  renderPros();
+  renderLessonBookings();
   renderFeatured();
   renderTournaments();
   renderRounds();
