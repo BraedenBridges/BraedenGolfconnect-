@@ -20,6 +20,7 @@
       <a href="#players">Find players</a>
       <a href="#tournaments">Tournaments</a>
       <a href="#rounds">My rounds</a>
+      <a href="#premium" id="premium-nav">Premium</a>
       <a href="#about">About</a>
     </nav>
   </header>
@@ -112,9 +113,28 @@
           <span>Search</span>
           <input type="search" id="search-box" placeholder="Name, course, or interest">
         </label>
+        <label>
+          <span>Interest <small class="premium-label">Premium</small></span>
+          <select id="interest-filter">
+            <option value="">Any interest</option>
+            <option>Learning</option>
+            <option>Casual golf</option>
+            <option>Walking</option>
+            <option>Practice rounds</option>
+            <option>Tournaments</option>
+          </select>
+        </label>
       </div>
 
       <p class="muted" id="player-count"></p>
+      <aside class="sponsored-ad" id="sponsored-ad">
+        <span>Sponsored</span>
+        <div>
+          <strong>Improve your short game</strong>
+          <p>Demo promotion from a fictional local golf shop.</p>
+        </div>
+        <button type="button" class="button secondary" id="ad-button">View offer</button>
+      </aside>
       <div class="grid" id="listing-grid"></div>
       <p class="empty" id="empty-message" hidden>No golfers match those filters.</p>
     </section>
@@ -127,6 +147,14 @@
         </div>
       </div>
       <div class="tournament-list" id="tournament-list"></div>
+      <aside class="promoted-listing">
+        <span class="promotion-label">Promoted tournament</span>
+        <div>
+          <h2>Summer Golf &amp; Charity Challenge</h2>
+          <p>Fictional course promotion · All experience levels</p>
+        </div>
+        <button type="button" class="button secondary" id="promoted-button">Learn more</button>
+      </aside>
     </section>
 
     <section id="rounds" data-view hidden>
@@ -143,6 +171,56 @@
         <div><strong id="best-score">--</strong><span>Best score</span></div>
       </div>
       <div class="round-list" id="round-list"></div>
+    </section>
+
+    <section id="premium" data-view hidden>
+      <div class="premium-hero">
+        <div>
+          <p class="eyebrow">Golf Connect Premium</p>
+          <h1>Play more golf. Spend less time searching.</h1>
+          <p class="lead">Unlock advanced partner matching and priority tournament updates for <strong>$5/month</strong>.</p>
+          <button class="button" id="premium-button" type="button">Start Premium</button>
+          <p class="premium-note">Demo checkout — no real payment is collected.</p>
+        </div>
+        <div class="premium-price" aria-label="Premium price">
+          <strong>$5</strong>
+          <span>per month</span>
+        </div>
+      </div>
+
+      <div class="premium-grid">
+        <article class="premium-feature">
+          <span>01</span>
+          <h2>Advanced matching</h2>
+          <p>Filter by shared interests, preferred course, preferred tee times, and driving distance.</p>
+        </article>
+        <article class="premium-feature">
+          <span>02</span>
+          <h2>Tournament alerts</h2>
+          <p>Get priority updates for nearby tournaments and new spots at promoted events.</p>
+        </article>
+        <article class="premium-feature">
+          <span>03</span>
+          <h2>Partner insights</h2>
+          <p>See which golfers match your availability and interests, plus saved player activity.</p>
+        </article>
+      </div>
+
+      <section class="premium-comparison">
+        <div>
+          <h2>Free</h2>
+          <p>Player search</p>
+          <p>Tournament discovery</p>
+          <p>Golf round journal</p>
+        </div>
+        <div class="premium-column">
+          <h2>Premium · $5/month</h2>
+          <p>Everything in Free</p>
+          <p>Advanced partner filters</p>
+          <p>Priority tournament updates</p>
+          <p>Promoted tournament visibility</p>
+        </div>
+      </section>
     </section>
 
     <section id="about" data-view hidden>

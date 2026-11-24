@@ -5,7 +5,7 @@
 - **Customer:** Golfers who want to play more often and get more from the game, especially beginners, people new to an area, and players who do not have a regular group.
 - **Problem:** Finding compatible playing partners, arranging a round, and keeping up with local golf opportunities can involve scattered messages, social-media posts, and club networks. It can be difficult to find people whose location, skill level, availability, and interests fit, or to keep a record of rounds and experiences.
 - **Solution:** Golf Connect is an online platform that helps golfers discover nearby players, organize rounds, find tournaments, and track their golfing experiences. Profiles can include a self-described skill level or handicap, approximate location, availability, preferred courses, and interests. Golfers can search and filter for compatible people, express interest, and coordinate a round. They can also browse tournament listings and record experiences such as rounds played or courses visited. Skill matching should help golfers find comfortable games, not exclude beginners.
-- **Revenue:** The initial service could be free to attract enough local golfers. Possible later revenue includes an optional premium membership for advanced filters or more match requests, and clearly labeled promotions or partnerships with golf courses. These are ideas to test, not proven revenue sources; the basic ability to find a playing partner should remain accessible.
+- **Revenue:** Golf Connect will use three direct revenue sources. The main source is a **Golf Connect Premium** membership priced at **$5 per month**, offering advanced partner filters, priority tournament updates, and partner insights. Golf courses and tournament organizers may pay for clearly labeled promoted tournament listings and featured placement, creating a secondary revenue stream. Golf-related businesses may use clearly labeled advertising placements, while the basic golfer matching, tournament discovery, and round journal remain free. Revenue should be tested against retention and user willingness to pay; basic golf partner discovery must remain accessible.
 
 ## 2. Where IT creates value
 
@@ -41,6 +41,8 @@ The service should collect only necessary profile information, let people contro
 - **Uneven local availability:** A new or rural market may not have enough players for useful matches. Launch in focused areas, be transparent about availability, and avoid implying that a match is guaranteed.
 - **Tournament information quality:** Outdated or inaccurate tournament listings could waste users' time. Identify listing sources, show when information was last updated, and provide a way to report errors.
 - **Business viability:** Users may not pay, and course partnerships may be difficult to secure. Test whether golfers return and whether they find suitable games before investing in premium features or advertising. Keep promotions transparent and do not sell personal profile data.
+- **Premium value and fairness:** Premium features must provide useful convenience without making basic partner discovery unusable. Test conversion at $5 per month and avoid paywalled safety or privacy controls.
+- **Advertising transparency:** Sponsored shops and tournament promotions must be clearly identified. Users should not be surprised by paid placement or led to believe an organizer is independent of Golf Connect. Ad targeting should not use sensitive personal data.
 
 ## 7. Prototype implementation
 
@@ -50,3 +52,5 @@ The service should collect only necessary profile information, let people contro
 - **Tournaments:** The tournament page presents clearly fictional events with dates, formats, locations, and skill ranges.
 - **Network effect:** The prototype demonstrates that value increases with more relevant local profiles and tournament listings, while remaining transparent that one browser is not a shared live network.
 - **Student prototype:** The live demonstration is fictional and does not provide real accounts, bookings, payments, secure messaging, or tournament registration.
+- **Premium prototype:** The Premium page presents a **$5/month** plan with advanced interest matching, tournament alerts, and partner insights. The checkout is simulated and only stores a demo Premium status in the browser; no real payment is collected.
+- **Advertising prototype:** The player and tournament pages include fictional, clearly labeled sponsored and promoted content. These demonstrate possible course advertising and tournament promotion revenue.

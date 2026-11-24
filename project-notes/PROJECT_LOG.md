@@ -17,6 +17,7 @@ Keep this up to date as you go — a few lines per work session is enough. It's 
   2. "Include finding players, organizing rounds, discovering tournaments, and tracking golfing experiences."
   3. "Refer to the rubric and update the business case log."
 - **What worked:** The prototype now has a branded home page, fictional golfer profiles with filters, tournament discovery, a local golf round journal, and browser-saved profile and round interactions.
+- **Revenue update:** Added a Premium option at $5/month, with advanced interest matching, tournament alerts, partner insights, clearly labeled golf-shop advertising, and promoted tournament listings.
 - **What broke, and how we fixed it:** The original starter used generic startup text and sample listings. It was replaced with Golf Connect-specific data and interactions.
 - **Committed?** no — changes ready for a checkpoint
 

@@ -26,6 +26,7 @@
     { id: 2, course: "Riverbend Links", date: "2026-04-26", score: 96, notes: "Played a relaxed round with friends." }
   ]);
   let savedIds = storage.get("golfConnectSavedIds", []);
+  let isPremium = storage.get("golfConnectPremium", false);
 
   document.title = STARTUP.name;
   document.getElementById("brand-name").textContent = STARTUP.name;
@@ -63,6 +64,7 @@
   const locationFilter = document.getElementById("location-filter");
   const skillFilter = document.getElementById("skill-filter");
   const availabilityFilter = document.getElementById("availability-filter");
+  const interestFilter = document.getElementById("interest-filter");
   const emptyMessage = document.getElementById("empty-message");
   const playerCount = document.getElementById("player-count");
 
@@ -129,8 +131,9 @@
       const matchesLocation = !locationFilter.value || player.location === locationFilter.value;
       const matchesSkill = !skillFilter.value || player.skill === skillFilter.value;
       const matchesAvailability = !availabilityFilter.value || player.availability === availabilityFilter.value;
+      const matchesInterest = !interestFilter.value || !isPremium || (player.interests || "").toLowerCase().indexOf(interestFilter.value.toLowerCase()) !== -1;
       const searchable = (player.name + " " + player.location + " " + player.skill + " " + player.availability + " " + (player.interests || "") + " " + (player.course || "")).toLowerCase();
-      return matchesLocation && matchesSkill && matchesAvailability && searchable.indexOf(query) !== -1;
+      return matchesLocation && matchesSkill && matchesAvailability && matchesInterest && searchable.indexOf(query) !== -1;
     });
 
     listingGrid.replaceChildren.apply(listingGrid, matches.map(function (player) {
@@ -159,6 +162,14 @@
 
   [searchBox, locationFilter, skillFilter, availabilityFilter].forEach(function (control) {
     control.addEventListener(control.tagName === "INPUT" ? "input" : "change", renderPlayers);
+  });
+  interestFilter.addEventListener("change", function () {
+    if (!isPremium && interestFilter.value) {
+      interestFilter.value = "";
+      window.location.hash = "#premium";
+    } else {
+      renderPlayers();
+    }
   });
 
   function renderTournaments() {
@@ -219,10 +230,23 @@
       const card = document.createElement("article");
       card.className = "round-card";
       const date = new Date(round.date + "T12:00:00");
-      card.innerHTML =
-        "<div><span class=\"round-date\">" + date.toLocaleDateString("en-CA", { month: "short", day: "numeric", year: "numeric" }) + "</span>" +
-        "<h2>" + round.course + "</h2><p>" + (round.notes || "Golf round") + "</p></div>" +
-        "<div class=\"score\"><strong>" + round.score + "</strong><span>score</span></div>";
+      const details = document.createElement("div");
+      const roundDate = document.createElement("span");
+      roundDate.className = "round-date";
+      roundDate.textContent = date.toLocaleDateString("en-CA", { month: "short", day: "numeric", year: "numeric" });
+      const course = document.createElement("h2");
+      course.textContent = round.course;
+      const notes = document.createElement("p");
+      notes.textContent = round.notes || "Golf round";
+      details.append(roundDate, course, notes);
+      const score = document.createElement("div");
+      score.className = "score";
+      const scoreValue = document.createElement("strong");
+      scoreValue.textContent = round.score;
+      const scoreLabel = document.createElement("span");
+      scoreLabel.textContent = "score";
+      score.append(scoreValue, scoreLabel);
+      card.append(details, score);
       return card;
     });
     list.replaceChildren.apply(list, cards);
@@ -279,10 +303,43 @@
     closeDialogs();
   });
 
+  function updatePremiumUI() {
+    const button = document.getElementById("premium-button");
+    const nav = document.getElementById("premium-nav");
+    if (isPremium) {
+      button.textContent = "Premium active ✓";
+      button.disabled = true;
+      nav.textContent = "Premium ✓";
+      document.getElementById("sponsored-ad").classList.add("hidden-ad");
+    } else {
+      button.textContent = "Start Premium";
+      button.disabled = false;
+      nav.textContent = "Premium";
+      document.getElementById("sponsored-ad").classList.remove("hidden-ad");
+    }
+  }
+
+  document.getElementById("premium-button").addEventListener("click", function () {
+    isPremium = true;
+    storage.set("golfConnectPremium", true);
+    updatePremiumUI();
+  });
+
+  document.getElementById("ad-button").addEventListener("click", function (event) {
+    event.currentTarget.textContent = "Offer saved ✓";
+    event.currentTarget.disabled = true;
+  });
+
+  document.getElementById("promoted-button").addEventListener("click", function (event) {
+    event.currentTarget.textContent = "More details sent ✓";
+    event.currentTarget.disabled = true;
+  });
+
   populateLocations();
   renderPlayers();
   renderFeatured();
   renderTournaments();
   renderRounds();
+  updatePremiumUI();
   showView();
 })();

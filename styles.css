@@ -71,10 +71,11 @@ h1 { line-height:1.12; }
 .player-details b { display:block; color:var(--text); }
 .player-description { flex:1; color:var(--muted); font-size:.92rem; }
 .interest { margin:4px 0 12px; color:var(--brand); font-size:.78rem; font-weight:800; }
-.filters { display:grid; grid-template-columns:1fr 1fr 1fr 1.5fr; gap:12px; margin-bottom:14px; padding:16px; border:1px solid var(--border); border-radius:var(--radius); background:var(--surface); }
+.filters { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px; margin-bottom:14px; padding:16px; border:1px solid var(--border); border-radius:var(--radius); background:var(--surface); }
 .filters label,.dialog-heading+label,dialog form>label { display:flex; flex-direction:column; gap:6px; font-size:.78rem; font-weight:800; }
 .filters input,.filters select,dialog input,dialog select,dialog textarea { width:100%; min-height:42px; padding:9px 10px; border:1px solid var(--border); border-radius:9px; background:white; font:inherit; }
 .filters input,.filters select { font-size:.88rem; }
+.premium-label { margin-left:4px; color:var(--brand); }
 #player-count { margin:12px 0; }
 .empty { padding:24px; color:var(--muted); text-align:center; }
 .tournament-list { display:flex; flex-direction:column; gap:12px; }
@@ -111,9 +112,32 @@ dialog form { display:flex; flex-direction:column; gap:14px; padding:22px; }
 .dialog-heading h2 { margin:0; }
 .icon-button { border:none; background:transparent; color:var(--muted); font-size:1.6rem; cursor:pointer; }
 textarea { min-height:80px; resize:vertical; }
+.premium-hero { display:flex; align-items:center; justify-content:space-between; gap:32px; min-height:330px; margin-bottom:20px; padding:48px; border-radius:20px; background:linear-gradient(120deg,#173e2b,#287b55); color:white; }
+.premium-hero .eyebrow,.premium-hero .lead { color:#dfe9e2; }
+.premium-hero h1 { max-width:680px; margin:8px 0 14px; font-size:clamp(2.3rem,5vw,4rem); }
+.premium-price { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:0 0 180px; height:180px; border:1px solid rgba(255,255,255,.35); border-radius:50%; background:rgba(255,255,255,.08); }
+.premium-price strong { font-size:3.5rem; line-height:1; }
+.premium-price span { color:#dfe9e2; }
+.premium-note { margin:10px 0 0; color:#cdddcf; font-size:.78rem; }
+.premium-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:20px; }
+.premium-feature { padding:24px; border:1px solid var(--border); border-radius:var(--radius); background:var(--surface); }
+.premium-feature span { color:var(--brand); font-size:.75rem; font-weight:800; }
+.premium-feature h2 { margin:14px 0 8px; }
+.premium-feature p { color:var(--muted); }
+.premium-comparison { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.premium-comparison>div { padding:24px; border:1px solid var(--border); border-radius:var(--radius); background:var(--surface); }
+.premium-comparison p { margin:10px 0; color:var(--muted); }
+.premium-comparison .premium-column { border-color:var(--brand); }
+.sponsored-ad,.promoted-listing { display:flex; align-items:center; justify-content:space-between; gap:16px; margin:12px 0 16px; padding:14px 16px; border:1px solid #d8c98e; border-radius:var(--radius); background:#fbf8e9; }
+.sponsored-ad>span,.promotion-label { color:#887638; font-size:.68rem; font-weight:800; text-transform:uppercase; }
+.sponsored-ad>div,.promoted-listing>div { flex:1; }
+.sponsored-ad p,.promoted-listing p { margin:2px 0 0; color:var(--muted); font-size:.84rem; }
+.promoted-listing h2 { margin:0; font-size:1.05rem; }
+.hidden-ad { display:none; }
 @media (max-width:850px) {
   .feature-grid,.player-grid { grid-template-columns:1fr 1fr; }
   .filters { grid-template-columns:1fr 1fr; }
+  .premium-grid { grid-template-columns:1fr 1fr; }
   .about-layout { grid-template-columns:1fr; }
   nav { gap:12px; }
   nav a { font-size:.78rem; }
@@ -129,4 +153,8 @@ textarea { min-height:80px; resize:vertical; }
   .tournament-card { grid-template-columns:72px 1fr; }
   .tournament-action { grid-column:1/-1; align-items:center; }
   .round-card { align-items:flex-start; }
+  .premium-hero { align-items:flex-start; flex-direction:column; padding:36px 24px; }
+  .premium-price { flex-basis:auto; width:150px; height:150px; }
+  .premium-grid,.premium-comparison { grid-template-columns:1fr; }
+  .sponsored-ad,.promoted-listing { align-items:flex-start; flex-wrap:wrap; }
 }
