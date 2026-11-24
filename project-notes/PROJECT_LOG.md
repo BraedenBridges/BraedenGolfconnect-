@@ -4,7 +4,7 @@ Keep this up to date as you go — a few lines per work session is enough. It's 
 
 **Team name:** Golf Connect Team
 **Startup name:** Golf Connect
-**Live site link:**
+**Live site link:** 
 
 ---
 
