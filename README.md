@@ -77,6 +77,8 @@ Copy one, fill in the blanks, and send it:
 
 Real logins, real databases, real payments, real AI features, emails and texts all need servers, security and paid services. If you ask for them, Copilot will offer to **fake** them instead (for example, a checkout page that shows a pretend confirmation). That's the right answer for a prototype. Add the real version to the *"What a real version would need"* list in your project log — it's part of your grade.
 
+The **Privacy & security** page is also a prototype: its profile visibility controls change what appears in this browser's golfer search, and its delete button removes the app's saved demo data from this browser. Browser local storage is not encrypted or protected by a login. These controls do not provide real account permissions or protect sensitive information, so use fictional data only.
+
 ## Step 5 — Save a checkpoint (commit) every time something works
 
 A **commit** is a saved version of your project. It's your undo button for big mistakes, and it's how your work gets to GitHub and to your live site.

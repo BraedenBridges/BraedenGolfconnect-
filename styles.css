@@ -112,6 +112,17 @@ h1 { line-height:1.12; }
 .round-card h2 { margin:4px 0; font-size:1.05rem; }
 .round-card p { margin:0; color:var(--muted); }
 .round-date { color:var(--brand); font-size:.78rem; font-weight:800; }
+.privacy-panel { margin-bottom:18px; }
+.privacy-panel h2 { margin-bottom:6px; }
+.privacy-panel>p { max-width:760px; }
+.privacy-options { display:grid; gap:10px; margin:20px 0; padding:16px; border:1px solid var(--border); border-radius:10px; }
+.privacy-options legend { padding:0 6px; font-size:.82rem; font-weight:800; }
+.privacy-option { display:flex; align-items:flex-start; gap:10px; padding:10px; border-radius:8px; background:var(--background); cursor:pointer; }
+.privacy-option input { width:18px; height:18px; margin:2px 0 0; accent-color:var(--brand); }
+.privacy-option span { display:flex; flex-direction:column; gap:3px; }
+.privacy-option small { color:var(--muted); font-size:.8rem; font-weight:400; }
+.privacy-status { min-height:1.5em; margin:8px 0 0; color:var(--brand-dark); font-size:.88rem; font-weight:700; }
+.privacy-status[role="alert"] { color:#a12626; }
 .score { display:flex; flex-direction:column; align-items:center; min-width:70px; }
 .score strong { font-size:1.8rem; }
 .score span { color:var(--muted); font-size:.75rem; }

@@ -14,12 +14,35 @@
     set: function (key, value) {
       try {
         localStorage.setItem(key, JSON.stringify(value));
+        return true;
       } catch (error) {
-        // The prototype still works if browser storage is unavailable.
+        return false;
+      }
+    },
+    remove: function (key) {
+      try {
+        localStorage.removeItem(key);
+        return true;
+      } catch (error) {
+        return false;
       }
     }
   };
 
+  const defaultPrivacySettings = {
+    profileVisible: true,
+    shareName: true,
+    shareLocation: true,
+    shareSkill: true,
+    shareAvailability: true
+  };
+  const storedPrivacySettings = storage.get("golfConnectPrivacySettings", {});
+  let privacySettings = Object.keys(defaultPrivacySettings).reduce(function (settings, key) {
+    settings[key] = storedPrivacySettings && typeof storedPrivacySettings[key] === "boolean"
+      ? storedPrivacySettings[key]
+      : defaultPrivacySettings[key];
+    return settings;
+  }, {});
   let customPlayers = storage.get("golfConnectProfiles", []);
   let rounds = storage.get("golfConnectRounds", [
     { id: 1, course: "Fairmont Fairway", date: "2026-05-10", score: 88, notes: "Great weather and a new personal best for nine holes." },
@@ -56,7 +79,18 @@
   window.addEventListener("hashchange", showView);
 
   const allPlayers = function () {
-    return customPlayers.concat(LISTINGS);
+    const visibleProfiles = privacySettings.profileVisible
+      ? customPlayers.map(function (player) {
+        return Object.assign({}, player, {
+          name: privacySettings.shareName ? player.name : "Golf Connect golfer",
+          initials: privacySettings.shareName ? player.initials : "GC",
+          location: privacySettings.shareLocation ? player.location : "",
+          skill: privacySettings.shareSkill ? player.skill : "",
+          availability: privacySettings.shareAvailability ? player.availability : ""
+        });
+      })
+      : [];
+    return visibleProfiles.concat(LISTINGS);
   };
 
   const listingGrid = document.getElementById("listing-grid");
@@ -90,16 +124,24 @@
     const identity = document.createElement("div");
     const title = document.createElement("h2");
     title.textContent = player.name;
-    const location = document.createElement("p");
-    location.textContent = player.location;
-    identity.append(title, location);
+    identity.append(title);
+    if (player.location) {
+      const location = document.createElement("p");
+      location.textContent = player.location;
+      identity.append(location);
+    }
     header.append(avatar, identity);
 
     const details = document.createElement("div");
     details.className = "player-details";
-    details.innerHTML =
-      '<span><b>Skill</b> ' + player.skill + "</span>" +
-      "<span><b>Available</b> " + player.availability + "</span>";
+    [["Skill", player.skill], ["Available", player.availability]].forEach(function (item) {
+      if (!item[1]) return;
+      const detail = document.createElement("span");
+      const label = document.createElement("b");
+      label.textContent = item[0];
+      detail.append(label, document.createTextNode(item[1]));
+      details.appendChild(detail);
+    });
 
     const description = document.createElement("p");
     description.className = "player-description";
@@ -152,6 +194,7 @@
   }
 
   function populateLocations() {
+    locationFilter.replaceChildren(locationFilter.options[0].cloneNode(true));
     const locations = Array.from(new Set(allPlayers().map(function (player) { return player.location; }))).sort();
     locations.forEach(function (location) {
       const option = document.createElement("option");
@@ -392,6 +435,81 @@
     list.replaceChildren.apply(list, cards);
   }
 
+  function renderPrivacySettings() {
+    Object.keys(defaultPrivacySettings).forEach(function (key) {
+      const inputId = key.replace(/[A-Z]/g, function (letter) {
+        return "-" + letter.toLowerCase();
+      });
+      document.getElementById(inputId).checked = privacySettings[key];
+    });
+  }
+
+  function savePrivacySettings() {
+    const nextSettings = Object.keys(defaultPrivacySettings).reduce(function (settings, key) {
+      const inputId = key.replace(/[A-Z]/g, function (letter) {
+        return "-" + letter.toLowerCase();
+      });
+      settings[key] = document.getElementById(inputId).checked;
+      return settings;
+    }, {});
+
+    const status = document.getElementById("privacy-status");
+    if (!storage.set("golfConnectPrivacySettings", nextSettings)) {
+      status.textContent = "Could not save your privacy settings in this browser. Check browser storage permissions and try again.";
+      status.setAttribute("role", "alert");
+      renderPrivacySettings();
+      return;
+    }
+
+    privacySettings = nextSettings;
+    status.textContent = "Privacy settings saved on this browser.";
+    status.setAttribute("role", "status");
+    locationFilter.value = "";
+    populateLocations();
+    renderPlayers();
+  }
+
+  function clearDemoData() {
+    if (!window.confirm("Delete all Golf Connect demo data saved in this browser? This cannot be undone.")) return;
+
+    const keys = [
+      "golfConnectProfiles",
+      "golfConnectRounds",
+      "golfConnectSavedIds",
+      "golfConnectPremium",
+      "golfConnectLessonBookings",
+      "golfConnectPrivacySettings"
+    ];
+    const removed = keys.map(function (key) { return storage.remove(key); }).every(Boolean);
+    const status = document.getElementById("privacy-status");
+    if (!removed) {
+      status.textContent = "Could not delete all saved data. Check browser storage permissions, then try again or clear this site's data in your browser settings.";
+      status.setAttribute("role", "alert");
+      return;
+    }
+
+    customPlayers = [];
+    rounds = [];
+    savedIds = [];
+    isPremium = false;
+    lessonBookings = [];
+    privacySettings = Object.assign({}, defaultPrivacySettings);
+    searchBox.value = "";
+    locationFilter.value = "";
+    skillFilter.value = "";
+    availabilityFilter.value = "";
+    interestFilter.value = "";
+    renderPrivacySettings();
+    populateLocations();
+    renderPlayers();
+    renderFeatured();
+    renderLessonBookings();
+    renderRounds();
+    updatePremiumUI();
+    status.textContent = "All Golf Connect demo data was deleted from this browser.";
+    status.setAttribute("role", "status");
+  }
+
   function closeDialogs() {
     document.querySelectorAll("dialog[open]").forEach(function (dialog) { dialog.close(); });
   }
@@ -465,6 +583,14 @@
     updatePremiumUI();
   });
 
+  Object.keys(defaultPrivacySettings).forEach(function (key) {
+    const inputId = key.replace(/[A-Z]/g, function (letter) {
+      return "-" + letter.toLowerCase();
+    });
+    document.getElementById(inputId).addEventListener("change", savePrivacySettings);
+  });
+  document.getElementById("clear-demo-data").addEventListener("click", clearDemoData);
+
   document.getElementById("ad-button").addEventListener("click", function (event) {
     event.currentTarget.textContent = "Offer saved ✓";
     event.currentTarget.disabled = true;
@@ -483,5 +609,6 @@
   renderTournaments();
   renderRounds();
   updatePremiumUI();
+  renderPrivacySettings();
   showView();
 })();

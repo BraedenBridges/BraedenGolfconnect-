@@ -21,6 +21,7 @@
       <a href="#pros">Find pros</a>
       <a href="#tournaments">Tournaments</a>
       <a href="#rounds">My rounds</a>
+      <a href="#privacy">Privacy</a>
       <a href="#premium" id="premium-nav">Premium</a>
       <a href="#about">About</a>
     </nav>
@@ -202,6 +203,41 @@
         <div><strong id="best-score">--</strong><span>Best score</span></div>
       </div>
       <div class="round-list" id="round-list"></div>
+    </section>
+
+    <section id="privacy" data-view hidden>
+      <div class="page-heading">
+        <div>
+          <p class="eyebrow">Your account controls</p>
+          <h1>Privacy &amp; security</h1>
+        </div>
+      </div>
+      <section class="panel privacy-panel" aria-labelledby="profile-privacy-heading">
+        <h2 id="profile-privacy-heading">Profile visibility</h2>
+        <p class="muted">Choose whether your profiles appear in golfer search and which details they show.</p>
+        <fieldset class="privacy-options">
+          <legend>Account permission</legend>
+          <label class="privacy-option">
+            <input id="profile-visible" type="checkbox" checked>
+            <span><strong>Show my profile in golfer search</strong><small>Turn this off to hide your saved profiles from the player search shown here.</small></span>
+          </label>
+        </fieldset>
+        <fieldset class="privacy-options">
+          <legend>Profile details to share</legend>
+          <label class="privacy-option"><input id="share-name" type="checkbox" checked><span><strong>Name</strong><small>Show the name saved with your profile.</small></span></label>
+          <label class="privacy-option"><input id="share-location" type="checkbox" checked><span><strong>Area</strong><small>Show your saved area and include it in location search.</small></span></label>
+          <label class="privacy-option"><input id="share-skill" type="checkbox" checked><span><strong>Skill level</strong><small>Show your skill level and include it in skill search.</small></span></label>
+          <label class="privacy-option"><input id="share-availability" type="checkbox" checked><span><strong>Availability</strong><small>Show your availability and include it in availability search.</small></span></label>
+        </fieldset>
+        <p class="privacy-status" id="privacy-status" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="panel privacy-panel" aria-labelledby="data-privacy-heading">
+        <h2 id="data-privacy-heading">Saved data on this device</h2>
+        <p>Your demo profiles, rounds, and preferences are stored in this browser using local storage. They are not encrypted, protected by a login, or synced to an account. Anyone with access to this browser profile may be able to view them. Do not enter real personal or sensitive information.</p>
+        <p class="muted">Your golf journal is private in this prototype and is not included in golfer search.</p>
+        <button class="button secondary" id="clear-demo-data" type="button">Delete my saved demo data</button>
+      </section>
     </section>
 
     <section id="premium" data-view hidden>
