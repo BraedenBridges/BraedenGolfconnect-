@@ -166,12 +166,16 @@
   }
 
   function toggleSaved(id) {
-    if (savedIds.indexOf(id) === -1) {
-      savedIds.push(id);
-    } else {
-      savedIds = savedIds.filter(function (savedId) { return savedId !== id; });
+    const nextSavedIds = savedIds.indexOf(id) === -1
+      ? savedIds.concat(id)
+      : savedIds.filter(function (savedId) { return savedId !== id; });
+    if (!storage.set("golfConnectSavedIds", nextSavedIds)) {
+      playerCount.textContent = "Could not save this player in this browser. Check browser storage permissions and try again.";
+      playerCount.setAttribute("role", "alert");
+      return;
     }
-    storage.set("golfConnectSavedIds", savedIds);
+    savedIds = nextSavedIds;
+    playerCount.setAttribute("role", "status");
     renderPlayers();
   }
 
@@ -190,6 +194,7 @@
       return makePlayerCard(player, false);
     }));
     emptyMessage.hidden = matches.length > 0;
+    playerCount.setAttribute("role", "status");
     playerCount.textContent = matches.length + " golfer" + (matches.length === 1 ? "" : "s") + " found";
   }
 
@@ -305,7 +310,9 @@
 
   function openLessonDialog(pro) {
     selectedPro = pro;
-    document.getElementById("lesson-form-error").hidden = true;
+    const error = document.getElementById("lesson-form-error");
+    error.hidden = true;
+    error.textContent = "";
     document.getElementById("lesson-pro-summary").textContent =
       pro.name + " · " + pro.course + ", " + pro.location + " · " + pro.rate;
     const today = new Date();
@@ -327,7 +334,7 @@
       return;
     }
     const data = new FormData(event.currentTarget);
-    lessonBookings.push({
+    const booking = {
       id: Date.now(),
       proName: selectedPro.name,
       course: selectedPro.course,
@@ -335,8 +342,15 @@
       date: data.get("date"),
       time: data.get("time"),
       note: data.get("note")
-    });
-    storage.set("golfConnectLessonBookings", lessonBookings);
+    };
+    const nextBookings = lessonBookings.concat(booking);
+    if (!storage.set("golfConnectLessonBookings", nextBookings)) {
+      const error = document.getElementById("lesson-form-error");
+      error.textContent = "Could not save this demo booking in this browser. Check browser storage permissions and try again.";
+      error.hidden = false;
+      return;
+    }
+    lessonBookings = nextBookings;
     renderLessonBookings();
     event.currentTarget.reset();
     selectedPro = null;
@@ -506,6 +520,9 @@
     renderLessonBookings();
     renderRounds();
     updatePremiumUI();
+    const premiumStatus = document.getElementById("premium-status");
+    premiumStatus.textContent = "";
+    premiumStatus.setAttribute("role", "status");
     status.textContent = "All Golf Connect demo data was deleted from this browser.";
     status.setAttribute("role", "status");
   }
@@ -518,16 +535,22 @@
   });
 
   document.getElementById("open-profile-button").addEventListener("click", function () {
+    const error = document.getElementById("profile-form-error");
+    error.hidden = true;
+    error.textContent = "";
     document.getElementById("profile-dialog").showModal();
   });
   document.getElementById("open-round-button").addEventListener("click", function () {
+    const error = document.getElementById("round-form-error");
+    error.hidden = true;
+    error.textContent = "";
     document.getElementById("round-dialog").showModal();
   });
 
   document.getElementById("profile-form").addEventListener("submit", function (event) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    customPlayers.unshift({
+    const player = {
       id: "custom-" + Date.now(),
       name: data.get("name"),
       location: data.get("location"),
@@ -537,8 +560,15 @@
       course: "Course preference not set",
       description: "Ready to meet compatible golfers.",
       initials: String(data.get("name")).slice(0, 2).toUpperCase()
-    });
-    storage.set("golfConnectProfiles", customPlayers);
+    };
+    const nextPlayers = [player].concat(customPlayers);
+    if (!storage.set("golfConnectProfiles", nextPlayers)) {
+      const error = document.getElementById("profile-form-error");
+      error.textContent = "Could not save your profile in this browser. Check browser storage permissions and try again.";
+      error.hidden = false;
+      return;
+    }
+    customPlayers = nextPlayers;
     populateLocations();
     renderPlayers();
     event.currentTarget.reset();
@@ -548,14 +578,21 @@
   document.getElementById("round-form").addEventListener("submit", function (event) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    rounds.unshift({
+    const round = {
       id: Date.now(),
       course: data.get("course"),
       date: data.get("date"),
       score: Number(data.get("score")),
       notes: data.get("notes")
-    });
-    storage.set("golfConnectRounds", rounds);
+    };
+    const nextRounds = [round].concat(rounds);
+    if (!storage.set("golfConnectRounds", nextRounds)) {
+      const error = document.getElementById("round-form-error");
+      error.textContent = "Could not save this round in this browser. Check browser storage permissions and try again.";
+      error.hidden = false;
+      return;
+    }
+    rounds = nextRounds;
     renderRounds();
     event.currentTarget.reset();
     closeDialogs();
@@ -578,8 +615,15 @@
   }
 
   document.getElementById("premium-button").addEventListener("click", function () {
+    const status = document.getElementById("premium-status");
+    if (!storage.set("golfConnectPremium", true)) {
+      status.textContent = "Could not save Premium on this browser. Check browser storage permissions and try again.";
+      status.setAttribute("role", "alert");
+      return;
+    }
     isPremium = true;
-    storage.set("golfConnectPremium", true);
+    status.textContent = "Premium demo is active on this browser.";
+    status.setAttribute("role", "status");
     updatePremiumUI();
   });
 

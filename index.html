@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Golf Connect</title>
   <meta name="description" content="Golf Connect helps golfers find playing partners, rounds, tournaments, and track golf experiences.">
   <link rel="stylesheet" href="styles.css">
@@ -128,7 +128,7 @@
         </label>
       </div>
 
-      <p class="muted" id="player-count"></p>
+      <p class="muted" id="player-count" role="status" aria-live="polite"></p>
       <aside class="sponsored-ad" id="sponsored-ad">
         <span>Sponsored</span>
         <div>
@@ -247,6 +247,7 @@
           <h1>Play more golf. Spend less time searching.</h1>
           <p class="lead">Unlock advanced partner matching and priority tournament updates for <strong>$5/month</strong>.</p>
           <button class="button" id="premium-button" type="button">Start Premium</button>
+          <p class="premium-status" id="premium-status" role="status" aria-live="polite"></p>
           <p class="premium-note">Demo checkout — no real payment is collected.</p>
         </div>
         <div class="premium-price" aria-label="Premium price">
@@ -320,6 +321,7 @@
         <h2>Add your profile</h2>
         <button type="button" class="icon-button" data-close-dialog aria-label="Close">×</button>
       </div>
+      <p class="dialog-error" id="profile-form-error" role="alert" hidden></p>
       <label>Name<input name="name" required maxlength="40" placeholder="First name only"></label>
       <label>Area<input name="location" required maxlength="60" placeholder="e.g. Antigonish"></label>
       <label>Skill level
@@ -348,6 +350,7 @@
         <h2>Add a round</h2>
         <button type="button" class="icon-button" data-close-dialog aria-label="Close">×</button>
       </div>
+      <p class="dialog-error" id="round-form-error" role="alert" hidden></p>
       <label>Course<input name="course" required maxlength="60" placeholder="Course name"></label>
       <label>Date<input name="date" type="date" required></label>
       <label>Score<input name="score" type="number" required min="18" max="200" placeholder="72"></label>
